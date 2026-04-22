@@ -1,21 +1,31 @@
 [Unit]
 Description=Calendar Kiosk Chromium
-After=calendar-frontend.service graphical.target
-Wants=calendar-frontend.service
+After=calendar-backend.service graphical.target
+Wants=calendar-backend.service
 
 [Service]
 Type=simple
 User=pi
 Environment=DISPLAY=:0
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
 ExecStartPre=/bin/sleep 5
-ExecStart=/usr/bin/chromium-browser \
+ExecStart=/usr/bin/chromium \
   --kiosk \
   --noerrdialogs \
   --disable-infobars \
   --no-first-run \
   --disable-session-crashed-bubble \
+  --disable-features=Translate,TranslateUI \
+  --disable-breakpad \
+  --disable-component-update \
+  --disable-domain-reliability \
+  --disable-sync \
+  --password-store=basic \
+  --no-default-browser-check \
+  --autoplay-policy=no-user-gesture-required \
   --check-for-update-interval=604800 \
-  http://localhost:3000
+  http://localhost:4000
 Restart=always
 RestartSec=10
 

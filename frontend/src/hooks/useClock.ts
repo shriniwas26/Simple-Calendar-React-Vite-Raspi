@@ -10,9 +10,13 @@ const timeFormatter = new Intl.DateTimeFormat('nl-NL', {
   hour12: false,
 });
 
-const dateFormatter = new Intl.DateTimeFormat('en-GB', {
+const weekdayFormatter = new Intl.DateTimeFormat('en-GB', {
   timeZone: TIMEZONE,
   weekday: 'long',
+});
+
+const dayMonthFormatter = new Intl.DateTimeFormat('en-GB', {
+  timeZone: TIMEZONE,
   day: 'numeric',
   month: 'long',
   year: 'numeric',
@@ -20,14 +24,16 @@ const dateFormatter = new Intl.DateTimeFormat('en-GB', {
 
 interface ClockState {
   timeStr: string;
-  dateStr: string;
+  weekdayStr: string;
+  dayMonthStr: string;
 }
 
 function getClockState(): ClockState {
   const now = new Date();
   return {
     timeStr: timeFormatter.format(now),
-    dateStr: dateFormatter.format(now),
+    weekdayStr: weekdayFormatter.format(now),
+    dayMonthStr: dayMonthFormatter.format(now),
   };
 }
 

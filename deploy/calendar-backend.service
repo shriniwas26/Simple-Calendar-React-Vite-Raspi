@@ -5,8 +5,10 @@ Wants=network-online.target
 
 [Service]
 Type=simple
+User=pi
+Group=pi
 WorkingDirectory=/opt/calendar-kiosk/backend
-ExecStart=/usr/bin/node --import tsx src/index.ts
+ExecStart=/usr/bin/node dist/index.js
 EnvironmentFile=/opt/calendar-kiosk/backend/.env
 Restart=always
 RestartSec=5

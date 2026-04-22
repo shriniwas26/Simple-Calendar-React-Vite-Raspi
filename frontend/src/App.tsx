@@ -4,13 +4,13 @@ import { Header } from './components/Header';
 import { Section } from './components/Section';
 
 export function App() {
-  const { timeStr, dateStr } = useClock();
+  const { timeStr, weekdayStr, dayMonthStr } = useClock();
   const { today, tomorrow, loading } = useCalendar();
 
   if (loading) {
     return (
       <div className="kiosk">
-        <Header dateStr={dateStr} timeStr={timeStr} />
+        <Header weekdayStr={weekdayStr} dayMonthStr={dayMonthStr} timeStr={timeStr} />
         <main className="main">
           <div className="loading">Loading...</div>
         </main>
@@ -20,7 +20,7 @@ export function App() {
 
   return (
     <div className="kiosk">
-      <Header dateStr={dateStr} timeStr={timeStr} />
+      <Header weekdayStr={weekdayStr} dayMonthStr={dayMonthStr} timeStr={timeStr} />
       <main className="main">
         <Section
           title="TODAY"

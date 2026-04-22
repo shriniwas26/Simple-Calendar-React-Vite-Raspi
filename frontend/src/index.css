@@ -9,7 +9,8 @@
   --font-size-event-title: clamp(1.4rem, 2.5vw, 2rem);
   --font-size-time: clamp(1rem, 1.8vw, 1.5rem);
   --font-size-clock: clamp(2rem, 5vw, 4rem);
-  --font-size-date: clamp(1rem, 2vw, 1.5rem);
+  --font-size-weekday: clamp(1.6rem, 3vw, 2.5rem);
+  --font-size-daymonth: clamp(1rem, 1.8vw, 1.35rem);
   --font-size-section-title: clamp(0.9rem, 1.5vw, 1.1rem);
 }
 
@@ -45,15 +46,29 @@ body {
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   padding-bottom: 1rem;
   border-bottom: 1px solid #222;
 }
 
 .header-date {
-  font-size: var(--font-size-date);
-  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.header-weekday {
+  font-size: var(--font-size-weekday);
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.header-daymonth {
+  font-size: var(--font-size-daymonth);
   font-weight: 400;
+  color: var(--text-muted);
+  line-height: 1.2;
 }
 
 .header-clock {
@@ -88,17 +103,18 @@ body {
   color: var(--text-muted);
 }
 
+/* Event rows — two-column grid: fixed time | fluid title */
 .section-events {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0.35rem 0;
 }
 
-/* Event rows */
 .event-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
   align-items: center;
-  gap: 1rem;
   padding: 0.6rem 0.8rem;
   background: var(--surface);
   border-radius: 4px;
@@ -118,17 +134,22 @@ body {
 }
 
 .event-time {
-  flex-shrink: 0;
-  width: 6ch;
   text-align: right;
   font-size: var(--font-size-time);
   font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
   font-variant-numeric: tabular-nums;
   color: var(--text-muted);
+  padding-right: 1rem;
+}
+
+.event-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
 }
 
 .event-title {
-  flex: 1;
   font-size: var(--font-size-event-title);
   font-weight: 500;
   white-space: nowrap;

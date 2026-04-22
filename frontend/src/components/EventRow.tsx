@@ -23,8 +23,10 @@ export function EventRow({ event }: EventRowProps) {
       <span className="event-time">
         {event.isAllDay ? 'ALL DAY' : formatTime(event.startLocal)}
       </span>
-      <span className="event-title">{event.title}</span>
-      {event.isOngoing && <span className="event-now-badge">NOW</span>}
+      <div className="event-title-wrap">
+        <span className="event-title">{event.title}</span>
+        {event.isOngoing && <span className="event-now-badge">NOW</span>}
+      </div>
     </div>
   );
 }
