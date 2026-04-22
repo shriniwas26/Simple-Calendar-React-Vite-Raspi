@@ -9,7 +9,7 @@ User=pi
 Environment=DISPLAY=:0
 Environment=XDG_RUNTIME_DIR=/run/user/1000
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
-ExecStartPre=/bin/sleep 5
+ExecStartPre=/bin/bash -c 'for i in $(seq 1 30); do curl -sf http://localhost:4000 >/dev/null && exit 0; sleep 1; done; exit 1'
 ExecStart=/usr/bin/chromium \
   --kiosk \
   --noerrdialogs \
