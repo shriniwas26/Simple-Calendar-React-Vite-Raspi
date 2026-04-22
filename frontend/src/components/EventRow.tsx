@@ -15,7 +15,16 @@ function formatTime(isoStr: string): string {
 }
 
 export function EventRow({ event }: EventRowProps) {
-  const sourceClass = `event-source-${event.source}`;
+  const paletteIndex = ((event.source % 8) + 8) % 8;
+  const titleCardClass = [
+    'event-title-card',
+    !event.feedColor && `event-source-${paletteIndex}`,
+  ]
+    .filter(Boolean)
+    .join(' ');
+  const titleCardStyle = event.feedColor
+    ? { borderLeftColor: event.feedColor }
+    : undefined;
   const ongoingClass = event.isOngoing ? 'event-ongoing' : '';
 
   return (
@@ -23,8 +32,13 @@ export function EventRow({ event }: EventRowProps) {
       <div className="event-time-card">
         {event.isAllDay ? 'ALL DAY' : formatTime(event.startLocal)}
       </div>
-      <div className={`event-title-card ${sourceClass}`}>
-        <span className="event-title">{event.title}</span>
+      <div className={titleCardClass} style={titleCardStyle}>
+        <div className="event-title-row">
+          <span className="event-title">{event.title}</span>
+          <span className="event-feed-name" title={event.feedName}>
+            {event.feedName}
+          </span>
+        </div>
         {event.isOngoing && <span className="event-now-badge">NOW</span>}
       </div>
     </div>

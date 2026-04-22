@@ -1,0 +1,14 @@
+{
+  "feeds": [
+    {
+      "name": "Work",
+      "url": "https://outlook.office365.com/owa/calendar/…/calendar.ics",
+      "color": "#6D4C41"
+    },
+    {
+      "name": "Home",
+      "url": "https://calendar.google.com/calendar/ical/…/basic.ics",
+      "color": "#4285F4"
+    }
+  ]
+}

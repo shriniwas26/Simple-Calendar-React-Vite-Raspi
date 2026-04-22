@@ -4,7 +4,9 @@ export interface CalendarEvent {
   startLocal: string;
   endLocal: string;
   isAllDay: boolean;
-  source: 'outlook' | 'google';
+  source: number;
+  feedName: string;
+  feedColor?: string;
   isOngoing: boolean;
 }
 

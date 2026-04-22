@@ -5,7 +5,7 @@ import type { CalendarEvent, CalendarEventWithOngoing, EventsResponse } from './
 function deduplicate(events: CalendarEvent[]): CalendarEvent[] {
   const map = new Map<string, CalendarEvent>();
   for (const ev of events) {
-    const key = `${ev.uid}|${ev.startUtc}`;
+    const key = `${ev.uid}|${ev.startUtc}|${ev.source}`;
     map.set(key, ev);
   }
   return Array.from(map.values());

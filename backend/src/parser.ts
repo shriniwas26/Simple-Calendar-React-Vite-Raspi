@@ -76,7 +76,12 @@ function expandRecurring(
   return events;
 }
 
-export function parseICS(icsText: string, source: 'outlook' | 'google'): CalendarEvent[] {
+export function parseICS(
+  icsText: string,
+  sourceIndex: number,
+  feedName: string,
+  feedColor?: string,
+): CalendarEvent[] {
   const now = DateTime.utc();
   const rangeStart = now.startOf('day').minus({ days: 1 });
   const rangeEnd = now.startOf('day').plus({ days: 7 });
@@ -86,19 +91,26 @@ export function parseICS(icsText: string, source: 'outlook' | 'google'): Calenda
     const comp = new ICAL.Component(parsed);
     const rawEvents = expandRecurring(comp, rangeStart, rangeEnd);
 
-    return rawEvents.map((ev) => ({
-      uid: ev.uid,
-      title: ev.title,
-      startUtc: ev.startUtc.toISO()!,
-      endUtc: ev.endUtc.toISO()!,
-      startLocal: ev.startUtc.setZone(config.timezone).toISO()!,
-      endLocal: ev.endUtc.setZone(config.timezone).toISO()!,
-      isAllDay: ev.isAllDay,
-      source,
-    }));
+    return rawEvents.map((ev) => {
+      const row: CalendarEvent = {
+        uid: ev.uid,
+        title: ev.title,
+        startUtc: ev.startUtc.toISO()!,
+        endUtc: ev.endUtc.toISO()!,
+        startLocal: ev.startUtc.setZone(config.timezone).toISO()!,
+        endLocal: ev.endUtc.setZone(config.timezone).toISO()!,
+        isAllDay: ev.isAllDay,
+        source: sourceIndex,
+        feedName,
+      };
+      if (feedColor !== undefined) {
+        row.feedColor = feedColor;
+      }
+      return row;
+    });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error(`Failed to parse ICS from ${source}: ${msg}`);
+    console.error(`Failed to parse ICS from "${feedName}" (#${sourceIndex}): ${msg}`);
     return [];
   }
 }

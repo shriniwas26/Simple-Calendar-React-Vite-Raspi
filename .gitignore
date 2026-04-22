@@ -58,3 +58,6 @@ coverage/
 # Temporary files
 tmp/
 temp/
+
+# JSON Configs
+ics.json

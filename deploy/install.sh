@@ -59,6 +59,15 @@ rsync -avz \
 rsync -avz \
   "$ROOT_DIR/backend/.env" "$PI_USER:$REMOTE_DIR/backend/.env"
 
+# ICS feed list (config loads ics.json from WorkingDirectory; must exist on the Pi)
+rsync -avz \
+  "$ROOT_DIR/backend/ics.json.example" "$PI_USER:$REMOTE_DIR/backend/ics.json.example"
+if [[ -f "$ROOT_DIR/backend/ics.json" ]]; then
+  rsync -avz \
+    "$ROOT_DIR/backend/ics.json" "$PI_USER:$REMOTE_DIR/backend/ics.json"
+fi
+ssh "$PI_USER" "if [ ! -f $REMOTE_DIR/backend/ics.json ]; then cp -a $REMOTE_DIR/backend/ics.json.example $REMOTE_DIR/backend/ics.json; fi"
+
 ssh "$PI_USER" "cd $REMOTE_DIR/backend && npm install --omit=dev"
 
 rsync -avz --delete \

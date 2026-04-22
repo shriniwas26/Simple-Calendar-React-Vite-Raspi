@@ -6,6 +6,7 @@ services:
     env_file: ./backend/.env
     volumes:
       - ./backend/src:/app/src:ro
+      - ./backend/ics.json:/app/ics.json:ro
     restart: unless-stopped
 
   frontend:

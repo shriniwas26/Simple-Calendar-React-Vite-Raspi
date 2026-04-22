@@ -3,8 +3,14 @@
   --surface: #161616;
   --text-primary: #f0f0f0;
   --text-muted: #888;
-  --accent-google: #4a8fff;
-  --accent-outlook: #7fba00;
+  --source-0: #4a8fff;
+  --source-1: #7fba00;
+  --source-2: #e040fb;
+  --source-3: #ff7043;
+  --source-4: #26c6da;
+  --source-5: #ab47bc;
+  --source-6: #ffca28;
+  --source-7: #8d6e63;
   --accent-now: #ff6b35;
   /* Sized for 800x400 @ 7" (~128 PPI) viewed at 1.5m.
      Minimum legible character height at 1.5m ≈ 40px (0.3° visual angle).
@@ -154,13 +160,35 @@ body {
   border-left: 3px solid transparent;
 }
 
-.event-source-google {
-  border-left-color: var(--accent-google);
+.event-title-row {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-width: 0;
 }
 
-.event-source-outlook {
-  border-left-color: var(--accent-outlook);
+.event-feed-name {
+  flex-shrink: 0;
+  max-width: 7rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
+
+.event-source-0 { border-left-color: var(--source-0); }
+.event-source-1 { border-left-color: var(--source-1); }
+.event-source-2 { border-left-color: var(--source-2); }
+.event-source-3 { border-left-color: var(--source-3); }
+.event-source-4 { border-left-color: var(--source-4); }
+.event-source-5 { border-left-color: var(--source-5); }
+.event-source-6 { border-left-color: var(--source-6); }
+.event-source-7 { border-left-color: var(--source-7); }
 
 .event-ongoing .event-time-card {
   background: #1a2a1a;
@@ -171,12 +199,13 @@ body {
 }
 
 .event-title {
+  flex: 1;
+  min-width: 0;
   font-size: var(--font-size-event-title);
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 0;
 }
 
 .event-now-badge {

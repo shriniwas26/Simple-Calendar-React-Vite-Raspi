@@ -6,7 +6,12 @@ export interface CalendarEvent {
   startLocal: string;
   endLocal: string;
   isAllDay: boolean;
-  source: 'outlook' | 'google';
+  /** Feed index in `ics.json` (used for border color rotation). */
+  source: number;
+  /** Display name from `ics.json` for this feed. */
+  feedName: string;
+  /** Set when the feed has `color` in `ics.json` (overrides class-based palette in the UI). */
+  feedColor?: string;
 }
 
 export interface CalendarEventWithOngoing extends CalendarEvent {

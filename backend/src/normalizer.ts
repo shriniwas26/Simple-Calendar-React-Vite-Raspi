@@ -6,8 +6,8 @@ export async function fetchAndNormalize(): Promise<CalendarEvent[]> {
   const feeds = await fetchAllFeeds();
   const allEvents: CalendarEvent[] = [];
 
-  for (const { text, label } of feeds) {
-    const events = parseICS(text, label);
+  for (const { text, sourceIndex, feedName, feedColor } of feeds) {
+    const events = parseICS(text, sourceIndex, feedName, feedColor);
     allEvents.push(...events);
   }
 

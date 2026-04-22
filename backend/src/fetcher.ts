@@ -2,21 +2,26 @@ import { config } from './config.js';
 
 export interface FeedResult {
   text: string;
-  label: 'outlook' | 'google';
+  sourceIndex: number;
+  feedName: string;
+  feedColor?: string;
 }
 
-async function fetchICS(url: string, label: string): Promise<string | null> {
+async function fetchICS(
+  url: string,
+  logLabel: string,
+): Promise<string | null> {
   for (let attempt = 0; attempt < 2; attempt++) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), config.fetchTimeoutMs);
 
     try {
       const res = await fetch(url, { signal: controller.signal });
-      if (!res.ok) throw new Error(`HTTP ${res.status} from ${label}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status} from ${logLabel}`);
       return await res.text();
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.error(`Fetch ${label} attempt ${attempt + 1} failed: ${msg}`);
+      console.error(`Fetch ${logLabel} attempt ${attempt + 1} failed: ${msg}`);
       if (attempt === 1) return null;
     } finally {
       clearTimeout(timeout);
@@ -26,16 +31,21 @@ async function fetchICS(url: string, label: string): Promise<string | null> {
 }
 
 export async function fetchAllFeeds(): Promise<FeedResult[]> {
-  const feeds: { url: string; label: 'outlook' | 'google' }[] = [];
-  if (config.outlookIcsUrl) feeds.push({ url: config.outlookIcsUrl, label: 'outlook' });
-  if (config.googleIcsUrl) feeds.push({ url: config.googleIcsUrl, label: 'google' });
+  const feeds = config.feeds.map((f, sourceIndex) => ({ ...f, sourceIndex }));
 
   const results = await Promise.allSettled(
-    feeds.map(({ url, label }) =>
-      fetchICS(url, label).then((text): FeedResult | null =>
-        text ? { text, label } : null
-      )
-    )
+    feeds.map(({ url, name, sourceIndex }) =>
+      fetchICS(url, `"${name}" (#${sourceIndex})`).then(
+        (text): FeedResult | null => {
+          if (!text) return null;
+          const r: FeedResult = { text, sourceIndex, feedName: name };
+          if (feeds[sourceIndex].color) {
+            r.feedColor = feeds[sourceIndex].color;
+          }
+          return r;
+        },
+      ),
+    ),
   );
 
   const successful: FeedResult[] = [];
