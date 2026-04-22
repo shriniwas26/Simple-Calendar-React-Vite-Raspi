@@ -10,30 +10,23 @@ const timeFormatter = new Intl.DateTimeFormat('nl-NL', {
   hour12: false,
 });
 
-const weekdayFormatter = new Intl.DateTimeFormat('en-GB', {
+const dateLabelFormatter = new Intl.DateTimeFormat('en-GB', {
   timeZone: TIMEZONE,
-  weekday: 'long',
-});
-
-const dayMonthFormatter = new Intl.DateTimeFormat('en-GB', {
-  timeZone: TIMEZONE,
+  weekday: 'short',
   day: 'numeric',
   month: 'long',
-  year: 'numeric',
 });
 
 interface ClockState {
   timeStr: string;
-  weekdayStr: string;
-  dayMonthStr: string;
+  dateLabelStr: string;
 }
 
 function getClockState(): ClockState {
   const now = new Date();
   return {
     timeStr: timeFormatter.format(now),
-    weekdayStr: weekdayFormatter.format(now),
-    dayMonthStr: dayMonthFormatter.format(now),
+    dateLabelStr: dateLabelFormatter.format(now),
   };
 }
 

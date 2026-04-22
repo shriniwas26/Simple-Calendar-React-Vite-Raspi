@@ -19,11 +19,11 @@ export function EventRow({ event }: EventRowProps) {
   const ongoingClass = event.isOngoing ? 'event-ongoing' : '';
 
   return (
-    <div className={`event-row ${sourceClass} ${ongoingClass}`}>
-      <span className="event-time">
+    <div className={`event-row ${ongoingClass}`}>
+      <div className="event-time-card">
         {event.isAllDay ? 'ALL DAY' : formatTime(event.startLocal)}
-      </span>
-      <div className="event-title-wrap">
+      </div>
+      <div className={`event-title-card ${sourceClass}`}>
         <span className="event-title">{event.title}</span>
         {event.isOngoing && <span className="event-now-badge">NOW</span>}
       </div>

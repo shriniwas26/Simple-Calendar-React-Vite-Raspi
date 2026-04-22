@@ -11,15 +11,15 @@ echo "=== Calendar Kiosk Pi Deploy ==="
 
 # --- System packages ---
 
-echo "[1/9] Updating package list..."
-ssh "$PI_HOST" "apt-get update -qq"
+# echo "[1/9] Updating package list..."
+# ssh "$PI_HOST" "apt-get update -qq"
 
-echo "[2/9] Ensuring Node.js 24 is installed..."
-ssh "$PI_HOST" 'command -v node &>/dev/null || (curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && apt-get install -y nodejs)'
+# echo "[2/9] Ensuring Node.js 24 is installed..."
+# ssh "$PI_HOST" 'command -v node &>/dev/null || (curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && apt-get install -y nodejs)'
 
-echo "[3/9] Ensuring Chromium and dependencies are installed..."
-ssh "$PI_HOST" "apt-get install -y --no-install-recommends chromium fontconfig fonts-dejavu xdotool unclutter"
-ssh "$PI_USER" "fc-cache -fv"
+# echo "[3/9] Ensuring Chromium and dependencies are installed..."
+# ssh "$PI_HOST" "apt-get install -y --no-install-recommends chromium fontconfig fonts-dejavu xdotool unclutter"
+# ssh "$PI_USER" "fc-cache -fv"
 
 # --- Disable screen blanking ---
 

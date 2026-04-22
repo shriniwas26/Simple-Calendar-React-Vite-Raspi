@@ -4,13 +4,13 @@ import { Header } from './components/Header';
 import { Section } from './components/Section';
 
 export function App() {
-  const { timeStr, weekdayStr, dayMonthStr } = useClock();
+  const { timeStr, dateLabelStr } = useClock();
   const { today, tomorrow, loading } = useCalendar();
 
   if (loading) {
     return (
       <div className="kiosk">
-        <Header weekdayStr={weekdayStr} dayMonthStr={dayMonthStr} timeStr={timeStr} />
+        <Header dateLabelStr={dateLabelStr} timeStr={timeStr} />
         <main className="main">
           <div className="loading">Loading...</div>
         </main>
@@ -20,19 +20,19 @@ export function App() {
 
   return (
     <div className="kiosk">
-      <Header weekdayStr={weekdayStr} dayMonthStr={dayMonthStr} timeStr={timeStr} />
+      <Header dateLabelStr={dateLabelStr} timeStr={timeStr} />
       <main className="main">
         <Section
           title="TODAY"
           events={today}
-          maxVisible={5}
+          maxVisible={20}
           emptyMessage="No more events today"
         />
         <hr className="section-divider" />
         <Section
           title="TOMORROW"
           events={tomorrow}
-          maxVisible={3}
+          maxVisible={20}
           emptyMessage="No events tomorrow"
         />
       </main>

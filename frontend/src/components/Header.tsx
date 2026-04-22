@@ -1,17 +1,18 @@
 interface HeaderProps {
-  weekdayStr: string;
-  dayMonthStr: string;
+  dateLabelStr: string;
   timeStr: string;
 }
 
-export function Header({ weekdayStr, dayMonthStr, timeStr }: HeaderProps) {
+export function Header({ dateLabelStr, timeStr }: HeaderProps) {
+  const hhmm = timeStr.slice(0, 5);
+  const ss = timeStr.slice(5);
+
   return (
     <header className="header">
-      <div className="header-date">
-        <span className="header-weekday">{weekdayStr}</span>
-        <span className="header-daymonth">{dayMonthStr}</span>
-      </div>
-      <span className="header-clock">{timeStr}</span>
+      <span className="header-date">{dateLabelStr}</span>
+      <span className="header-clock">
+        {hhmm}<span className="header-clock-seconds">{ss}</span>
+      </span>
     </header>
   );
 }
