@@ -79,6 +79,8 @@ body {
   gap: 0.4rem;
   min-height: 0;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   scrollbar-width: thin;
   scrollbar-color: #333 transparent;
 }
