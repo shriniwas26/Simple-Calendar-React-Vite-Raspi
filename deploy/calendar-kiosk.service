@@ -2,6 +2,8 @@
 Description=Calendar Kiosk Chromium
 After=calendar-backend.service graphical.target
 Wants=calendar-backend.service
+StartLimitBurst=5
+StartLimitIntervalSec=60
 
 [Service]
 Type=simple
@@ -31,8 +33,6 @@ ExecStart=/usr/bin/chromium \
   http://localhost:4000
 Restart=always
 RestartSec=10
-StartLimitBurst=5
-StartLimitIntervalSec=60
 
 [Install]
 WantedBy=graphical.target

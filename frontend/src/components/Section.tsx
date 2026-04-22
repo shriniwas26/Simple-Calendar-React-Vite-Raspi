@@ -9,12 +9,11 @@ interface SectionProps {
   emptyMessage: string;
 }
 
-export function Section({ title, events, maxVisible, emptyMessage }: SectionProps) {
+export function Section({ title: _title, events, maxVisible, emptyMessage }: SectionProps) {
   const visible = events.slice(0, maxVisible);
 
   return (
     <section className="section">
-      <h2 className="section-title">{title}</h2>
       {visible.length === 0 ? (
         <EmptyState message={emptyMessage} />
       ) : (

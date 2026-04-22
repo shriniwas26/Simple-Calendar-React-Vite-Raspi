@@ -28,6 +28,7 @@ export function App() {
           maxVisible={5}
           emptyMessage="No more events today"
         />
+        <hr className="section-divider" />
         <Section
           title="TOMORROW"
           events={tomorrow}
