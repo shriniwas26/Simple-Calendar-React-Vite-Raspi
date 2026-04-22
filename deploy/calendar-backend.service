@@ -1,0 +1,15 @@
+[Unit]
+Description=Calendar Kiosk Backend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/calendar-kiosk/backend
+ExecStart=/usr/bin/node --import tsx src/index.ts
+EnvironmentFile=/opt/calendar-kiosk/backend/.env
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

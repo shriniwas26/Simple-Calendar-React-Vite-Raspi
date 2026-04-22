@@ -1,0 +1,23 @@
+[Unit]
+Description=Calendar Kiosk Chromium
+After=calendar-frontend.service graphical.target
+Wants=calendar-frontend.service
+
+[Service]
+Type=simple
+User=pi
+Environment=DISPLAY=:0
+ExecStartPre=/bin/sleep 5
+ExecStart=/usr/bin/chromium-browser \
+  --kiosk \
+  --noerrdialogs \
+  --disable-infobars \
+  --no-first-run \
+  --disable-session-crashed-bubble \
+  --check-for-update-interval=604800 \
+  http://localhost:3000
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=graphical.target

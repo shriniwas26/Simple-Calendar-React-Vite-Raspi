@@ -1,0 +1,25 @@
+{
+  "name": "calendar-kiosk-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx --watch src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "ical.js": "^2.1.0",
+    "luxon": "^3.5.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.2",
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^22.14.1",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}

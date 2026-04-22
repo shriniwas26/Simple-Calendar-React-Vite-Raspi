@@ -1,0 +1,12 @@
+[Unit]
+Description=Calendar Kiosk Frontend
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/npx serve /opt/calendar-kiosk/frontend/dist -l 3000 --no-clipboard
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
