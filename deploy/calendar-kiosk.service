@@ -9,7 +9,8 @@ User=pi
 Environment=DISPLAY=:0
 Environment=XDG_RUNTIME_DIR=/run/user/1000
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
-ExecStartPre=/bin/bash -c 'for i in $(seq 1 30); do curl -sf http://localhost:4000 >/dev/null && exit 0; sleep 1; done; exit 1'
+Environment=FONTCONFIG_PATH=/etc/fonts
+ExecStartPre=/bin/bash -c 'for i in $(seq 1 60); do curl -sf http://localhost:4000 >/dev/null && exit 0; sleep 1; done; exit 1'
 ExecStart=/usr/bin/chromium \
   --kiosk \
   --noerrdialogs \
@@ -25,9 +26,13 @@ ExecStart=/usr/bin/chromium \
   --no-default-browser-check \
   --autoplay-policy=no-user-gesture-required \
   --check-for-update-interval=604800 \
+  --disable-vulkan \
+  --use-gl=egl \
   http://localhost:4000
 Restart=always
 RestartSec=10
+StartLimitBurst=5
+StartLimitIntervalSec=60
 
 [Install]
 WantedBy=graphical.target

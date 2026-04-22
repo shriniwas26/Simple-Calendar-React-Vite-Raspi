@@ -19,6 +19,7 @@ ssh "$PI_HOST" 'command -v node &>/dev/null || (curl -fsSL https://deb.nodesourc
 
 echo "[3/9] Ensuring Chromium and dependencies are installed..."
 ssh "$PI_HOST" "apt-get install -y --no-install-recommends chromium fontconfig fonts-dejavu xdotool unclutter"
+ssh "$PI_USER" "fc-cache -fv"
 
 # --- Disable screen blanking ---
 
