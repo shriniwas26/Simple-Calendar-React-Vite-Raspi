@@ -10,23 +10,36 @@ const timeFormatter = new Intl.DateTimeFormat('nl-NL', {
   hour12: false,
 });
 
-const dateLabelFormatter = new Intl.DateTimeFormat('en-GB', {
+const weekdayShortFormatter = new Intl.DateTimeFormat('en-GB', {
   timeZone: TIMEZONE,
   weekday: 'short',
-  day: 'numeric',
+});
+
+const monthDayFormatter = new Intl.DateTimeFormat('en-GB', {
+  timeZone: TIMEZONE,
+  day: '2-digit',
   month: 'long',
 });
 
+/** e.g. "Thu, April 23" and "Thu, April 01" */
+function formatDayDateLine(now: Date): string {
+  const weekdayShort = weekdayShortFormatter.format(now);
+  const mdParts = monthDayFormatter.formatToParts(now);
+  const monthName = mdParts.find((p) => p.type === 'month')?.value ?? '';
+  const day = mdParts.find((p) => p.type === 'day')?.value ?? '';
+  return `${weekdayShort}, ${monthName} ${day}`;
+}
+
 interface ClockState {
   timeStr: string;
-  dateLabelStr: string;
+  dayDateStr: string;
 }
 
 function getClockState(): ClockState {
   const now = new Date();
   return {
     timeStr: timeFormatter.format(now),
-    dateLabelStr: dateLabelFormatter.format(now),
+    dayDateStr: formatDayDateLine(now),
   };
 }
 
