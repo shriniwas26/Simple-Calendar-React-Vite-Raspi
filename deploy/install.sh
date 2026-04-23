@@ -23,16 +23,16 @@ echo "=== Calendar Kiosk Pi Deploy ==="
 
 # --- Disable screen blanking ---
 
-echo "[4/9] Disabling screen blanking..."
-ssh "$PI_HOST" "mkdir -p /etc/X11/xorg.conf.d"
-ssh "$PI_HOST" 'cat > /etc/X11/xorg.conf.d/10-no-blanking.conf << EOF
-Section "ServerFlags"
-    Option "BlankTime"  "0"
-    Option "StandbyTime" "0"
-    Option "SuspendTime" "0"
-    Option "OffTime"     "0"
-EndSection
-EOF'
+# echo "[4/9] Disabling screen blanking..."
+# ssh "$PI_HOST" "mkdir -p /etc/X11/xorg.conf.d"
+# ssh "$PI_HOST" 'cat > /etc/X11/xorg.conf.d/10-no-blanking.conf << EOF
+# Section "ServerFlags"
+#     Option "BlankTime"  "0"
+#     Option "StandbyTime" "0"
+#     Option "SuspendTime" "0"
+#     Option "OffTime"     "0"
+# EndSection
+# EOF'
 
 # --- Application directories ---
 
@@ -49,29 +49,29 @@ echo "[6/9] Building backend and frontend..."
 
 echo "[7/9] Deploying to Pi..."
 
-rsync -avz --delete \
-  "$ROOT_DIR/backend/dist/" "$PI_USER:$REMOTE_DIR/backend/dist/"
+rsync -avzh --delete \
+	"$ROOT_DIR/backend/dist/" "$PI_USER:$REMOTE_DIR/backend/dist/"
 
-rsync -avz \
-  "$ROOT_DIR/backend/package.json" "$ROOT_DIR/backend/package-lock.json" \
-  "$PI_USER:$REMOTE_DIR/backend/"
+rsync -avzh \
+	"$ROOT_DIR/backend/package.json" "$ROOT_DIR/backend/package-lock.json" \
+	"$PI_USER:$REMOTE_DIR/backend/"
 
-rsync -avz \
-  "$ROOT_DIR/backend/.env" "$PI_USER:$REMOTE_DIR/backend/.env"
+rsync -avzh \
+	"$ROOT_DIR/backend/.env" "$PI_USER:$REMOTE_DIR/backend/.env"
 
 # ICS feed list (config loads ics.json from WorkingDirectory; must exist on the Pi)
-rsync -avz \
-  "$ROOT_DIR/backend/ics.json.example" "$PI_USER:$REMOTE_DIR/backend/ics.json.example"
+rsync -avzh \
+	"$ROOT_DIR/backend/ics.json.example" "$PI_USER:$REMOTE_DIR/backend/ics.json.example"
 if [[ -f "$ROOT_DIR/backend/ics.json" ]]; then
-  rsync -avz \
-    "$ROOT_DIR/backend/ics.json" "$PI_USER:$REMOTE_DIR/backend/ics.json"
+	rsync -avzh \
+		"$ROOT_DIR/backend/ics.json" "$PI_USER:$REMOTE_DIR/backend/ics.json"
 fi
 ssh "$PI_USER" "if [ ! -f $REMOTE_DIR/backend/ics.json ]; then cp -a $REMOTE_DIR/backend/ics.json.example $REMOTE_DIR/backend/ics.json; fi"
 
 ssh "$PI_USER" "cd $REMOTE_DIR/backend && npm install --omit=dev"
 
-rsync -avz --delete \
-  "$ROOT_DIR/frontend/dist/" "$PI_USER:$REMOTE_DIR/frontend/dist/"
+rsync -avzh --delete \
+	"$ROOT_DIR/frontend/dist/" "$PI_USER:$REMOTE_DIR/frontend/dist/"
 
 # --- Clean up stale services ---
 
