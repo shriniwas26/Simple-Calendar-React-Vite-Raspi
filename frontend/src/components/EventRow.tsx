@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import type { CalendarEvent } from "../types";
-import { SOURCE_PALETTE } from "../sourcePalette";
+import { formatEventTime } from "../lib/datetime";
 
 interface EventRowProps {
   event: CalendarEvent;
@@ -11,19 +11,9 @@ function titleCardBackground(accent: string): string {
   return `color-mix(in srgb, ${accent} 32%, #0a0a0a)`;
 }
 
-function formatTime(isoStr: string): string {
-  const date = new Date(isoStr);
-  return date.toLocaleTimeString("nl-NL", {
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Europe/Amsterdam",
-    hour12: false,
-  });
-}
-
 export function EventRow({ event }: EventRowProps) {
   const paletteIndex = ((event.source % 8) + 8) % 8;
-  const accent = event.feedColor ?? SOURCE_PALETTE[paletteIndex];
+  const accent = event.feedColor ?? `var(--source-${paletteIndex})`;
   const titleCardClass = [
     "event-title-card",
     !event.feedColor && `event-source-${paletteIndex}`,
@@ -39,7 +29,7 @@ export function EventRow({ event }: EventRowProps) {
   return (
     <div className={`event-row ${ongoingClass}`}>
       <div className="event-time-card">
-        {event.isAllDay ? "ALL DAY" : formatTime(event.startLocal)}
+        {event.isAllDay ? "ALL DAY" : formatEventTime(event.startLocal)}
       </div>
       <div className={titleCardClass} style={titleCardStyle}>
         <span className="event-title">{event.title}</span>

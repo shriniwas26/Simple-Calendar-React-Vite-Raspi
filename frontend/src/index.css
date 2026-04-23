@@ -3,7 +3,7 @@
   --surface: #161616;
   --text-primary: #f0f0f0;
   --text-muted: #888;
-  /* Border colours; order matches src/sourcePalette.ts */
+  /* Border colours; single source of truth for feed fallback palette. */
   --source-0: #4a8fff;
   --source-1: #7fba00;
   --source-2: #e040fb;
@@ -148,9 +148,28 @@ body {
 }
 
 .section-divider {
-  border: none;
-  border-top: 1px solid #222;
-  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 0.35rem 0 0.5rem;
+  min-height: 2.2rem;
+}
+
+.section-divider-line {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2b2b2b 0%, #6d6d6d 50%, #2b2b2b 100%);
+}
+
+.section-divider-label {
+  flex-shrink: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #d7d7d7;
+  white-space: nowrap;
 }
 
 /* Event rows — two independent cards side by side */
@@ -257,4 +276,13 @@ body {
   font-size: var(--font-size-event-title);
   color: var(--text-muted);
   padding: 2rem 0;
+}
+
+.error-banner {
+  font-size: 1.1rem;
+  color: #ffb3a0;
+  background: #2a1512;
+  border: 1px solid #5c2b21;
+  border-radius: 4px;
+  padding: 0.45rem 0.65rem;
 }

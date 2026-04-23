@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import type { CalendarEvent, EventsResponse } from '../types';
+import { useState, useCallback } from 'react';
+import type { CalendarEvent } from '../types';
+import { fetchCalendarEvents } from '../api/calendarApi';
+import { usePolling } from './usePolling';
 
 const POLL_INTERVAL = 5 * 60 * 1000;
 const MAX_BACKOFF = 10 * 60 * 1000;
@@ -9,6 +11,7 @@ interface CalendarState {
   tomorrow: CalendarEvent[];
   fetchedAt: string | null;
   loading: boolean;
+  status: 'loading' | 'ready' | 'error';
   error: string | null;
 }
 
@@ -18,56 +21,35 @@ export function useCalendar(): CalendarState {
     tomorrow: [],
     fetchedAt: null,
     loading: true,
+    status: 'loading',
     error: null,
   });
 
-  const failCountRef = useRef(0);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-
   const fetchEvents = useCallback(async () => {
     try {
-      const res = await fetch('/api/events');
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data: EventsResponse = await res.json();
-
-      failCountRef.current = 0;
+      const data = await fetchCalendarEvents();
       setState({
         today: data.today,
         tomorrow: data.tomorrow,
         fetchedAt: data.fetchedAt,
         loading: false,
+        status: 'ready',
         error: null,
       });
+      return true;
     } catch (err) {
-      failCountRef.current += 1;
       const msg = err instanceof Error ? err.message : String(err);
       setState((prev) => ({
         ...prev,
         loading: false,
+        status: 'error',
         error: msg,
       }));
+      return false;
     }
   }, []);
 
-  useEffect(() => {
-    fetchEvents();
-
-    function schedule() {
-      const backoff = Math.min(
-        POLL_INTERVAL * Math.pow(2, failCountRef.current),
-        MAX_BACKOFF,
-      );
-      const delay = failCountRef.current === 0 ? POLL_INTERVAL : backoff;
-
-      timerRef.current = setTimeout(async () => {
-        await fetchEvents();
-        schedule();
-      }, delay);
-    }
-
-    schedule();
-    return () => clearTimeout(timerRef.current);
-  }, [fetchEvents]);
+  usePolling({ tick: fetchEvents, baseIntervalMs: POLL_INTERVAL, maxIntervalMs: MAX_BACKOFF });
 
   return state;
 }

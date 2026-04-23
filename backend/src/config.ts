@@ -13,6 +13,10 @@ export interface IcsFeed {
 const FEED_COLOR_HEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/;
 
 const DEFAULT_FEEDS_FILE = 'ics.json';
+const DEFAULT_PORT = 4000;
+const DEFAULT_TIMEZONE = 'Europe/Amsterdam';
+const DEFAULT_CACHE_TTL_MS = 1_800_000;
+const DEFAULT_FETCH_TIMEOUT_MS = 10_000;
 
 function resolveFeedsPath(): string {
   const override = process.env.FEEDS_FILE ?? process.env.ICS_JSON_PATH;
@@ -99,13 +103,41 @@ function loadFeedsFromFile(): IcsFeed[] {
   return out;
 }
 
+function parseIntInRange(name: string, raw: string | undefined, fallback: number, min: number, max: number): number {
+  const input = raw?.trim();
+  if (!input) return fallback;
+  const value = Number.parseInt(input, 10);
+  if (!Number.isInteger(value) || value < min || value > max) {
+    throw new Error(`${name} must be an integer in range [${min}, ${max}], got "${raw}"`);
+  }
+  return value;
+}
+
+function parsePositiveMs(name: string, raw: string | undefined, fallback: number): number {
+  return parseIntInRange(name, raw, fallback, 1, Number.MAX_SAFE_INTEGER);
+}
+
+function parseTimezone(raw: string | undefined, fallback: string): string {
+  const tz = raw?.trim() || fallback;
+  try {
+    Intl.DateTimeFormat('en-US', { timeZone: tz }).format(new Date());
+    return tz;
+  } catch {
+    throw new Error(`TIMEZONE must be a valid IANA timezone, got "${raw}"`);
+  }
+}
+
 const feeds = loadFeedsFromFile();
 
 export const config = {
   feeds,
-  port: parseInt(process.env.PORT ?? '4000', 10),
-  timezone: process.env.TIMEZONE ?? 'Europe/Amsterdam',
-  cacheTtlMs: parseInt(process.env.CACHE_TTL_MS ?? '1800000', 10),
-  fetchTimeoutMs: parseInt(process.env.FETCH_TIMEOUT_MS ?? '10000', 10),
+  port: parseIntInRange('PORT', process.env.PORT, DEFAULT_PORT, 1, 65535),
+  timezone: parseTimezone(process.env.TIMEZONE, DEFAULT_TIMEZONE),
+  cacheTtlMs: parsePositiveMs('CACHE_TTL_MS', process.env.CACHE_TTL_MS, DEFAULT_CACHE_TTL_MS),
+  fetchTimeoutMs: parsePositiveMs(
+    'FETCH_TIMEOUT_MS',
+    process.env.FETCH_TIMEOUT_MS,
+    DEFAULT_FETCH_TIMEOUT_MS,
+  ),
   staticDir: process.env.STATIC_DIR ?? resolve(import.meta.dirname, '../../frontend/dist'),
 } as const;

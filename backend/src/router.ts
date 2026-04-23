@@ -7,7 +7,14 @@ router.get('/events', async (_req, res) => {
   try {
     const data = await getOrRefresh();
     res.json(data);
-  } catch {
-    res.status(503).json({ error: 'No calendar data available' });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`GET /api/events failed: ${msg}`);
+    res.status(503).json({
+      error: {
+        code: 'CALENDAR_UNAVAILABLE',
+        message: 'No calendar data available',
+      },
+    });
   }
 });
