@@ -10,6 +10,7 @@ interface CacheEntry {
 
 const cache: CacheEntry = { events: null, fetchedAt: 0 };
 let refreshInProgress: Promise<CalendarEvent[]> | null = null;
+let lastRefreshFailedAt = 0;
 
 async function refresh(): Promise<CalendarEvent[]> {
   const events = await fetchAndNormalize();
@@ -27,10 +28,27 @@ export async function getOrRefresh(): Promise<EventsResponse> {
   } else if (refreshInProgress) {
     events = await refreshInProgress;
   } else {
+    const failedAge = Date.now() - lastRefreshFailedAt;
+    const inFailureCooldown =
+      lastRefreshFailedAt > 0 && failedAge < config.failureRefreshCooldownMs;
+    if (inFailureCooldown) {
+      if (cache.events) {
+        console.warn('Serving stale cache (refresh cooldown after previous failure)');
+        events = cache.events;
+      } else {
+        throw new Error(
+          `Calendar refresh cooldown active (${Math.round(config.failureRefreshCooldownMs / 60000)} minute(s) after failure)`,
+        );
+      }
+      return filterEvents(events);
+    }
+
     try {
       refreshInProgress = refresh();
       events = await refreshInProgress;
+      lastRefreshFailedAt = 0;
     } catch (err) {
+      lastRefreshFailedAt = Date.now();
       const msg = err instanceof Error ? err.message : String(err);
       console.error(`Cache refresh failed: ${msg}`);
       if (cache.events) {

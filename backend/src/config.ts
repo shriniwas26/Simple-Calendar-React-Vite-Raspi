@@ -15,8 +15,9 @@ const FEED_COLOR_HEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa
 const DEFAULT_FEEDS_FILE = 'ics.json';
 const DEFAULT_PORT = 4000;
 const DEFAULT_TIMEZONE = 'Europe/Amsterdam';
-const DEFAULT_CACHE_TTL_MS = 1_800_000;
-const DEFAULT_FETCH_TIMEOUT_MS = 10_000;
+const DEFAULT_CACHE_TTL_MINUTES = 30;
+const DEFAULT_FETCH_TIMEOUT_SECONDS = 10;
+const DEFAULT_FAILURE_REFRESH_COOLDOWN_MINUTES = 10;
 
 function resolveFeedsPath(): string {
   const override = process.env.FEEDS_FILE ?? process.env.ICS_JSON_PATH;
@@ -117,6 +118,14 @@ function parsePositiveMs(name: string, raw: string | undefined, fallback: number
   return parseIntInRange(name, raw, fallback, 1, Number.MAX_SAFE_INTEGER);
 }
 
+function minutesToMs(minutes: number): number {
+  return minutes * 60 * 1000;
+}
+
+function secondsToMs(seconds: number): number {
+  return seconds * 1000;
+}
+
 function parseTimezone(raw: string | undefined, fallback: string): string {
   const tz = raw?.trim() || fallback;
   try {
@@ -133,11 +142,26 @@ export const config = {
   feeds,
   port: parseIntInRange('PORT', process.env.PORT, DEFAULT_PORT, 1, 65535),
   timezone: parseTimezone(process.env.TIMEZONE, DEFAULT_TIMEZONE),
-  cacheTtlMs: parsePositiveMs('CACHE_TTL_MS', process.env.CACHE_TTL_MS, DEFAULT_CACHE_TTL_MS),
-  fetchTimeoutMs: parsePositiveMs(
-    'FETCH_TIMEOUT_MS',
-    process.env.FETCH_TIMEOUT_MS,
-    DEFAULT_FETCH_TIMEOUT_MS,
+  cacheTtlMs: minutesToMs(
+    parsePositiveMs(
+      'CACHE_TTL_MINUTES',
+      process.env.CACHE_TTL_MINUTES,
+      DEFAULT_CACHE_TTL_MINUTES,
+    ),
+  ),
+  fetchTimeoutMs: secondsToMs(
+    parsePositiveMs(
+      'FETCH_TIMEOUT_SECONDS',
+      process.env.FETCH_TIMEOUT_SECONDS,
+      DEFAULT_FETCH_TIMEOUT_SECONDS,
+    ),
+  ),
+  failureRefreshCooldownMs: minutesToMs(
+    parsePositiveMs(
+      'FAILURE_REFRESH_COOLDOWN_MINUTES',
+      process.env.FAILURE_REFRESH_COOLDOWN_MINUTES,
+      DEFAULT_FAILURE_REFRESH_COOLDOWN_MINUTES,
+    ),
   ),
   staticDir: process.env.STATIC_DIR ?? resolve(import.meta.dirname, '../../frontend/dist'),
 } as const;

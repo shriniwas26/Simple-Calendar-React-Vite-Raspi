@@ -18,11 +18,14 @@ rsync_cmd -avzh \
 	"$ROOT_DIR/backend/package.json" "$ROOT_DIR/backend/package-lock.json" \
 	"$PI_USER:$REMOTE_DIR/backend/"
 
-if [[ -f "$ROOT_DIR/backend/.env" ]]; then
-	echo "[deploy] Syncing backend .env..."
-	rsync_cmd -avzh \
-		"$ROOT_DIR/backend/.env" "$PI_USER:$REMOTE_DIR/backend/.env"
+if [[ ! -f "$ROOT_DIR/backend/.env" ]]; then
+	echo "[deploy] Missing required file: $ROOT_DIR/backend/.env" >&2
+	echo "[deploy] Create it first (for example by copying backend/.env.example)." >&2
+	exit 1
 fi
+echo "[deploy] Syncing backend .env..."
+rsync_cmd -avzh \
+	"$ROOT_DIR/backend/.env" "$PI_USER:$REMOTE_DIR/backend/.env"
 
 echo "[deploy] Syncing ICS config..."
 rsync_cmd -avzh \
