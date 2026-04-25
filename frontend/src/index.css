@@ -19,7 +19,7 @@
   --font-size-clock: 3.2rem; /* 51px — dominant element, reads at a glance */
   --font-size-weekday: 2.5rem; /* 40px */
   --font-size-event-title: 2.6rem; /* 41.6px — +15% */
-  --font-size-time: 2.15rem; /* 34.4px — +15% */
+  --font-size-time: 2.8rem; /* Increased start-time size for better readability */
   /* Header pills — faint tints (readable on kiosk, not loud) */
   --pill-daydate-bg: #181a1e;
   --pill-daydate-border: #303238;
