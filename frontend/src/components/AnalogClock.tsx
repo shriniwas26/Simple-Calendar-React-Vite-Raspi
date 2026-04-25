@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
+import type { CSSProperties } from 'react';
 
 function degreesForHands(date: Date) {
-  const seconds = date.getSeconds();
-  const minutes = date.getMinutes();
+  const seconds = date.getSeconds() + date.getMilliseconds() / 1000;
+  const minutes = date.getMinutes() + seconds / 60;
   const hours = date.getHours() % 12;
 
   const secondDeg = seconds * 6;
-  const minuteDeg = minutes * 6 + seconds * 0.1;
+  const minuteDeg = minutes * 6;
   const hourDeg = hours * 30 + minutes * 0.5;
 
   return { hourDeg, minuteDeg, secondDeg };
@@ -35,6 +36,19 @@ export function AnalogClock() {
       </header>
       <div className="analog-clock-wrap">
         <div className="analog-clock" role="img" aria-label="Analog clock">
+          <div className="analog-clock-face-markers" aria-hidden="true">
+            {Array.from({ length: 12 }, (_, i) =>
+              i % 3 === 0 ? null : (
+                <span
+                  key={i}
+                  className="analog-clock-marker-slot"
+                  style={{ '--marker-rotation': `${i * 30}deg` } as CSSProperties}
+                >
+                  <span className="analog-clock-marker" />
+                </span>
+              ),
+            )}
+          </div>
           <div className="analog-clock-face-numbers" aria-hidden="true">
             {quarterNumbers.map((item) => (
               <span key={item.label} className={`analog-clock-number ${item.className}`}>

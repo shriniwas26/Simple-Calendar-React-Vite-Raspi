@@ -298,8 +298,10 @@ body {
   --dash-font-time: 2.45rem;
   --dash-font-meta: 1.05rem;
   --dash-line-height-event: 1.15;
-  --dash-clock-size: 270px;
+  --dash-clock-size: 320px;
   --dash-clock-number-size: 1.35rem;
+  --dash-clock-marker-inset: 24px;
+  --dash-clock-number-inset: 14px;
 }
 
 /* Dashboard layout */
@@ -427,14 +429,20 @@ body {
   inset: 0;
 }
 
+.analog-clock-marker-slot {
+  position: absolute;
+  inset: 0;
+  transform: rotate(var(--marker-rotation));
+}
+
 .analog-clock-marker {
   position: absolute;
-  left: calc(50% - 1px);
-  top: 10px;
+  left: 50%;
+  top: var(--dash-clock-marker-inset);
   width: 2px;
-  height: 18px;
+  height: 14px;
   background: #bec4cd;
-  transform-origin: 1px calc(50% - 10px);
+  transform: translateX(-50%);
   opacity: 0.95;
 }
 
@@ -452,25 +460,25 @@ body {
 }
 
 .analog-clock-number-top {
-  top: 16px;
+  top: var(--dash-clock-number-inset);
   left: 50%;
   transform: translateX(-50%);
 }
 
 .analog-clock-number-right {
-  right: 18px;
+  right: var(--dash-clock-number-inset);
   top: 50%;
   transform: translateY(-50%);
 }
 
 .analog-clock-number-bottom {
-  bottom: 16px;
+  bottom: var(--dash-clock-number-inset);
   left: 50%;
   transform: translateX(-50%);
 }
 
 .analog-clock-number-left {
-  left: 18px;
+  left: var(--dash-clock-number-inset);
   top: 50%;
   transform: translateY(-50%);
 }
@@ -529,9 +537,11 @@ body {
     --dash-font-event: 2.45rem;
     --dash-font-time: 2.7rem;
     --dash-font-meta: 1.12rem;
-    --dash-clock-size: 300px;
+    --dash-clock-size: 360px;
     --dash-clock-number-size: 1.5rem;
     --dash-gap-shell: 1.35rem;
+    --dash-clock-marker-inset: 28px;
+    --dash-clock-number-inset: 18px;
   }
 
   .dashboard-shell {
