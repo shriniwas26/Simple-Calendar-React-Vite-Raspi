@@ -7,13 +7,25 @@ export interface FeedResult {
   feedColor?: string;
 }
 
+const FETCH_ATTEMPTS = 3;
+const FETCH_RETRY_BASE_DELAY_SECONDS = 10;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function fetchRetryDelayMs(attempt: number): number {
+  return FETCH_RETRY_BASE_DELAY_SECONDS * 1000 * attempt;
+}
+
 async function fetchICS(
   url: string,
   logLabel: string,
 ): Promise<string | null> {
-  for (let attempt = 0; attempt < 2; attempt++) {
+  for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt++) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), config.fetchTimeoutMs);
+    let retryDelayMs: number | null = null;
 
     try {
       const res = await fetch(url, { signal: controller.signal });
@@ -21,10 +33,17 @@ async function fetchICS(
       return await res.text();
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.error(`Fetch ${logLabel} attempt ${attempt + 1} failed: ${msg}`);
-      if (attempt === 1) return null;
+      console.error(`Fetch ${logLabel} attempt ${attempt}/${FETCH_ATTEMPTS} failed: ${msg}`);
+      if (attempt === FETCH_ATTEMPTS) return null;
+
+      retryDelayMs = fetchRetryDelayMs(attempt);
+      console.warn(`Retrying ${logLabel} in ${retryDelayMs}ms`);
     } finally {
       clearTimeout(timeout);
+    }
+
+    if (retryDelayMs !== null) {
+      await sleep(retryDelayMs);
     }
   }
   return null;
