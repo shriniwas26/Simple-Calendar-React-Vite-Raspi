@@ -4,23 +4,29 @@ After=calendar-backend.service graphical.target
 Wants=calendar-backend.service
 
 [Service]
-Type=simple
+Type=exec
 User=pi
 
 Environment=DISPLAY=:0
-Environment=XDG_RUNTIME_DIR=/run/user/1000
+Environment=HOME=/run/calendar-kiosk
+Environment=XDG_RUNTIME_DIR=/run/calendar-kiosk
+Environment=XDG_CONFIG_HOME=/run/calendar-kiosk/config
+Environment=XDG_CACHE_HOME=/run/calendar-kiosk/cache
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
 Environment=FONTCONFIG_PATH=/etc/fonts
 
 RuntimeDirectory=calendar-kiosk
+RuntimeDirectoryMode=0700
 
-ExecStartPre=/usr/bin/curl --silent --fail http://localhost:4000
+ExecStartPre=/usr/bin/curl --silent --fail --output /dev/null http://localhost:4000
 
 # Chromium starts as a quiet full-screen kiosk.
 #   --kiosk                         Full-screen kiosk mode.
 #   --noerrdialogs                  Hide modal browser error dialogs.
 #   --no-first-run                  Skip first-run setup prompts.
 #   --disable-session-crashed-bubble Hide the "restore pages" prompt after power loss.
+#   --disable-breakpad              Disable older Breakpad crash reporting noise.
+#   --disable-crash-reporter        Disable newer Crashpad crash reporting noise.
 #
 # Keep Chromium's writable profile and cache in /run, which is RAM-backed on the Pi.
 # This reduces SD-card writes. The cache limits are 100 MiB, expressed in bytes.
@@ -28,6 +34,7 @@ ExecStartPre=/usr/bin/curl --silent --fail http://localhost:4000
 #   --disk-cache-dir                General cache location.
 #   --disk-cache-size               General cache size limit.
 #   --media-cache-size              Media cache size limit.
+#   --crash-dumps-dir               Crash dump location, kept in RAM if Chromium still creates one.
 #
 # Turn off browser features that are unnecessary for this local kiosk page.
 #   --disable-background-networking Reduce update/telemetry/network background work.
@@ -46,9 +53,12 @@ ExecStart=/usr/bin/chromium \
   --disk-cache-dir=/run/calendar-kiosk/chromium-cache \
   --disk-cache-size=104857600 \
   --media-cache-size=104857600 \
+  --crash-dumps-dir=/run/calendar-kiosk/crash-dumps \
   --noerrdialogs \
   --no-first-run \
   --disable-session-crashed-bubble \
+  --disable-breakpad \
+  --disable-crash-reporter \
   --disable-background-networking \
   --disable-sync \
   --password-store=basic \
@@ -60,7 +70,22 @@ ExecStart=/usr/bin/chromium \
   http://localhost:4000
 
 Restart=always
-RestartSec=10
+RestartSec=5
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+RestrictSUIDSGID=true
+
+# Performance tuning: run on CPU cores 2 and 3 with round-robin scheduling at a high priority.
+# Max allowed memory is 256 MiB, which should be sufficient for this kiosk use case and helps prevent runaway memory usage.
+
+AllowedCPUs=2-3
+CPUSchedulingPolicy=rr
+CPUSchedulingPriority=3
+MemoryHigh=256M
+MemoryMax=256M
 
 [Install]
 WantedBy=graphical.target
