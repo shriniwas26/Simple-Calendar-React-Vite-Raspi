@@ -16,7 +16,30 @@ RuntimeDirectory=calendar-kiosk
 
 ExecStartPre=/usr/bin/curl --silent --fail http://localhost:4000
 
-# Cache limits are 100 MiB, expressed in bytes for Chromium.
+# Chromium starts as a quiet full-screen kiosk.
+#   --kiosk                         Full-screen kiosk mode.
+#   --noerrdialogs                  Hide modal browser error dialogs.
+#   --no-first-run                  Skip first-run setup prompts.
+#   --disable-session-crashed-bubble Hide the "restore pages" prompt after power loss.
+#
+# Keep Chromium's writable profile and cache in /run, which is RAM-backed on the Pi.
+# This reduces SD-card writes. The cache limits are 100 MiB, expressed in bytes.
+#   --user-data-dir                 Browser profile location.
+#   --disk-cache-dir                General cache location.
+#   --disk-cache-size               General cache size limit.
+#   --media-cache-size              Media cache size limit.
+#
+# Turn off browser features that are unnecessary for this local kiosk page.
+#   --disable-background-networking Reduce update/telemetry/network background work.
+#   --disable-sync                  Disable browser account sync.
+#   --password-store=basic          Avoid desktop keyring prompts.
+#   --no-default-browser-check      Skip default-browser checks.
+#   --log-level=3                   Keep Chromium's own logging quiet.
+#   --autoplay-policy               Allow media playback without user input.
+#
+# Raspberry Pi graphics path.
+#   --disable-vulkan                Avoid Vulkan on the Pi.
+#   --use-gl=egl                    Use EGL/OpenGL instead.
 ExecStart=/usr/bin/chromium \
   --kiosk \
   --user-data-dir=/run/calendar-kiosk/chromium-profile \
