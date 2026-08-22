@@ -81,7 +81,7 @@ RestrictSUIDSGID=true
 # Performance tuning: run on CPU cores 2 and 3 with round-robin scheduling at a high priority.
 # Max allowed memory is 256 MiB, which should be sufficient for this kiosk use case and helps prevent runaway memory usage.
 
-AllowedCPUs=2-3
+AllowedCPUs=3
 CPUSchedulingPolicy=rr
 CPUSchedulingPriority=3
 MemoryHigh=256M

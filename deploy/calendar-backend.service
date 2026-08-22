@@ -7,11 +7,43 @@ Wants=network-online.target
 Type=simple
 User=pi
 Group=pi
+
 WorkingDirectory=/opt/calendar-kiosk/backend
-ExecStart=/usr/bin/node dist/index.js
 EnvironmentFile=/opt/calendar-kiosk/backend/.env
+
+Environment=HOME=/run/calendar-backend
+Environment=XDG_RUNTIME_DIR=/run/calendar-backend
+Environment=XDG_CONFIG_HOME=/run/calendar-backend/config
+Environment=XDG_CACHE_HOME=/run/calendar-backend/cache
+Environment=TMPDIR=/run/calendar-backend/tmp
+
+RuntimeDirectory=calendar-backend
+RuntimeDirectoryMode=0700
+
+ExecStartPre=/usr/bin/mkdir -p /run/calendar-backend/config /run/calendar-backend/cache /run/calendar-backend/tmp
+ExecStart=/usr/bin/node dist/index.js
+
 Restart=always
 RestartSec=5
+
+AllowedCPUs=3
+
+# Keep incidental runtime/cache/temp writes in RAM-backed /run.
+# The app's own calendar cache is already in process memory.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+RestrictSUIDSGID=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+LockPersonality=true
+RestrictRealtime=true
+CapabilityBoundingSet=
+AmbientCapabilities=
 
 [Install]
 WantedBy=multi-user.target
